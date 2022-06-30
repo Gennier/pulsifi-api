@@ -61,6 +61,7 @@ export class JobController {
     return await this.service.createJob(input, user.id);
   }
 
+  @Public()
   @Get(':id')
   async findJob(@Param('id') id: number): Promise<JobDto> {
     return await this.service.getJob(id);
