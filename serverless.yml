@@ -1,0 +1,41 @@
+service: pulsifi-api
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: us-east-1
+  timeout: 30
+  lambdaHashingVersion: 20201221
+
+functions:
+  main:
+    handler: dist/serverless.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+          cors: true
+      - http:
+          method: ANY
+          path: '{proxy+}'
+          cors: true
+
+    environment:
+      NODE_ENV: production
+      API_BASE_PATH: /api
+      PORT: 4000
+      JWT_SECRET_KEY: ${env:JWT_SECRET_KEY}
+      JWT_TOKEN_EXPIRATION_TIME: ${env:JWT_TOKEN_EXPIRATION_TIME}
+      JWT_REFRESH_TOKEN_EXPIRATION_TIME: ${env:JWT_REFRESH_TOKEN_EXPIRATION_TIME}
+      DATABASE_PROVIDER: ${env:DATABASE_PROVIDER}
+      DATABASE_USERNAME: ${env:DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
+      DATABASE_HOST: ${env:DATABASE_HOST}
+      DATABASE_PORT: ${env:DATABASE_PORT}
+      DATABASE_NAME: ${env:DATABASE_NAME}
+      SERVERLESS_MODE: true

@@ -3,6 +3,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Callback, Context, Handler } from 'aws-lambda';
 import serverlessExpress from '@vendia/serverless-express';
+import {
+  UncaughtExceptionFilter,
+  HttpExceptionFilter,
+  TypeORMExceptionFilter,
+} from './shared/filters';
 
 let server: Handler;
 
@@ -13,6 +18,13 @@ async function bootstrap() {
   if (apiBasePath) {
     app.setGlobalPrefix(apiBasePath);
   }
+
+  app.useGlobalFilters(
+    new UncaughtExceptionFilter(),
+    new HttpExceptionFilter(),
+    new TypeORMExceptionFilter(),
+  );
+  app.enableCors();
 
   await app.init();
 
