@@ -1,6 +1,13 @@
 import { AbstractEntity } from '../shared/entities/abstract.entity';
-import { Column, Entity, PrimaryGeneratedColumn, DeepPartial } from 'typeorm';
-import { UserStatus } from './user.enum';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  DeepPartial,
+  OneToMany,
+} from 'typeorm';
+import { UserRole, UserStatus } from './user.enum';
+import { Job } from '../job/job.entity';
 
 @Entity('user')
 export class User extends AbstractEntity {
@@ -21,4 +28,10 @@ export class User extends AbstractEntity {
 
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.active })
   status: UserStatus;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.talent })
+  role: UserRole;
+
+  @OneToMany(() => Job, (job) => job.user)
+  jobs?: Job[];
 }

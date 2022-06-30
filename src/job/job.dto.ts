@@ -1,5 +1,5 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
-import { IsString, IsEnum, IsNumber } from 'class-validator';
+import { IsString, IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { JobStatus } from './job.enum';
 
 export class JobDto {
@@ -27,3 +27,9 @@ export class CreateJobDto extends PickType(JobDto, [
 ] as const) {}
 
 export class UpdateJobDto extends PartialType(JobDto) {}
+
+export class GetJobsFilterDto {
+  @IsOptional()
+  @IsEnum(JobStatus)
+  status: JobStatus;
+}

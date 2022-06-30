@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateJobDto, JobDto, UpdateJobDto } from './job.dto';
+import {
+  CreateJobDto,
+  GetJobsFilterDto,
+  JobDto,
+  UpdateJobDto,
+} from './job.dto';
 import { Job } from './job.entity';
 
 @Injectable()
@@ -11,9 +16,10 @@ export class JobService {
     protected readonly jobRepository: Repository<Job>,
   ) {}
 
-  async createJob(input: CreateJobDto): Promise<JobDto> {
+  async createJob(input: CreateJobDto, userId: string): Promise<JobDto> {
     return await this.jobRepository.save({
       ...input,
+      userId,
     });
   }
 
@@ -31,14 +37,38 @@ export class JobService {
     return job;
   }
 
-  async getJobs() {
-    return await this.jobRepository.find();
+  async getJobsByUserId(filter: GetJobsFilterDto, userId: string) {
+    const { status } = filter;
+    return await this.jobRepository.find({
+      where: {
+        ...(status && {
+          status,
+        }),
+        userId,
+      },
+    });
   }
 
-  async updateJob(id: number, input: UpdateJobDto): Promise<JobDto> {
+  async getJobs(filter: GetJobsFilterDto) {
+    const { status } = filter;
+    return await this.jobRepository.find({
+      where: {
+        ...(status && {
+          status,
+        }),
+      },
+    });
+  }
+
+  async updateJob(
+    id: number,
+    input: UpdateJobDto,
+    userId: string,
+  ): Promise<JobDto> {
     const job = await this.jobRepository.findOne({
       where: {
         id,
+        userId,
       },
     });
 

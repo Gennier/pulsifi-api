@@ -20,6 +20,7 @@ async function bootstrap() {
     new HttpExceptionFilter(),
     new TypeORMExceptionFilter(),
   );
+  app.enableCors();
 
   await app.listen(port);
 

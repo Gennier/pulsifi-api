@@ -2,9 +2,11 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
+import { UserRole } from '../user/user.enum';
 
 export class AccessToken {
   @IsString()
@@ -45,6 +47,9 @@ export class RegisterDto {
 
   @IsNotEmpty()
   name: string;
+
+  @IsOptional()
+  role: UserRole;
 }
 
 export class LoginDto {

@@ -4,6 +4,11 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobModule } from './job/job.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { SharedModule } from './shared/shared.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './shared/guards/auth.guard';
 
 @Module({
   imports: [
@@ -21,8 +26,17 @@ import { ConfigModule } from '@nestjs/config';
       multipleStatements: true,
     }),
     JobModule,
+    AuthModule,
+    UserModule,
+    SharedModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

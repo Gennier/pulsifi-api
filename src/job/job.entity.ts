@@ -1,6 +1,14 @@
 import { AbstractEntity } from '../shared/entities/abstract.entity';
-import { Column, Entity, PrimaryGeneratedColumn, DeepPartial } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  DeepPartial,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { JobStatus } from './job.enum';
+import { User } from '../user/user.entity';
 
 @Entity('job')
 export class Job extends AbstractEntity {
@@ -13,7 +21,7 @@ export class Job extends AbstractEntity {
   @Column({ type: 'varchar', nullable: false })
   title: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'text', nullable: false })
   description: string;
 
   @Column({ type: 'varchar', nullable: false })
@@ -25,4 +33,11 @@ export class Job extends AbstractEntity {
     default: JobStatus.active,
   })
   status: JobStatus;
+
+  @Column({ type: 'varchar', nullable: false })
+  userId: string;
+
+  @ManyToOne(() => User, (user: User) => user.jobs)
+  @JoinColumn()
+  user: User;
 }

@@ -7,6 +7,7 @@ import { AccessTokenPayload, AuthUser } from './auth.type';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
+import { UserRole } from '../user/user.enum';
 
 @Injectable()
 export class AuthService {
@@ -17,15 +18,20 @@ export class AuthService {
     private readonly passwordCipher: PasswordCipher,
   ) {}
 
-  async userRegister(input: RegisterDto) {
+  async register(input: RegisterDto) {
     const hashedPassword = await this.passwordCipher.hash(input.password);
-    Object.assign(input, { password: hashedPassword });
+    Object.assign(input, {
+      password: hashedPassword,
+      ...(input.role && {
+        role: input.role,
+      }),
+    });
 
     const user = await this.userRepository.save(input);
     return this.createAccessToken(user);
   }
 
-  async userLogin(input: LoginDto): Promise<Auth> {
+  async login(input: LoginDto): Promise<Auth> {
     const user = await this.userRepository.findOne({
       where: {
         email: input.email,
